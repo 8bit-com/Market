@@ -9,6 +9,7 @@ namespace Market
         private List<Showcase> showcas;
 
         private int _showcaseLimit = 10;
+
         private int IdShowCount = 100; 
         private int IdProdCount = 100;
 
@@ -18,8 +19,8 @@ namespace Market
 
             //тестовые объекты
             {
-                showcas.Add(new Showcase(name: "NewShowcase1", volume: 10, id: 1));
-                showcas.Add(new Showcase(name: "NewShowcase2", volume: 10, id: 2));
+                showcas.Add(new Showcase(name: "NewShowcase1", volume: 30, id: 1));
+                showcas.Add(new Showcase(name: "NewShowcase2", volume: 30, id: 2));
                 showcas.Add(new Showcase(name: "NewShowcase3", volume: 10, id: 3));
                 showcas[0].Products.Add(new ProductOnDisplay(name: "Milk", volume: 1, id: 11, price: 1, quantity: 2));
                 showcas[0].Products.Add(new ProductOnDisplay(name: "Bread", volume: 1, id: 12, price: 1, quantity: 4));
@@ -36,7 +37,7 @@ namespace Market
 
         public bool Add(bool firstMenu, int i, int sumVolume = 0)
         {           
-            sumVolume = showcas[i].Products.Select(x => x.Volume).Sum();
+            sumVolume = showcas[i].Products.Select(x => x.Volume).Sum() * showcas[i].Products.Select(x => x.Quantity).Sum();
 
             if (firstMenu)
             {
@@ -73,26 +74,73 @@ namespace Market
             
         }
 
-        public bool Edit(bool firstMenu, int firstIter, int lastIter)
+        public bool Edit(bool firstMenu, int Iter, int lastIter, int itr3, string str)
         {
             if (firstMenu)
             {
-                if (showcas[firstIter].Products.Count == 0)
+                switch (itr3)
                 {
-                    showcas.RemoveAt(firstIter);
-                    return true;
+                    case 0:
+                        showcas[Iter].Name = str;
+                        return true;
+                    case 1:
+                        showcas[Iter].Volume = Int32.Parse(str);
+                        return true;
+                    default:
+                        return false;
                 }
-                else return false;
             }
             else
             {
-                if (showcas[firstIter].Products.Count > 0)
+                switch (itr3)
                 {
-                    showcas[firstIter].Products.RemoveAt(lastIter);
-                    return true;
+                    case 0:
+                        showcas[lastIter].Products[Iter].Name = str;
+                        return true;
+                    case 1:
+                        if (CheckVolume(lastIter, str, false, 0))
+                        {
+                            showcas[lastIter].Products[Iter].Volume = Int32.Parse(str);
+                            return true;
+                        }
+                        else return false;
+                        
+                    case 2:
+                        showcas[lastIter].Products[Iter].Price = Int32.Parse(str);
+                        return true;
+                    case 3:
+                        if (CheckVolume(lastIter, str, true, Iter))
+                        {
+                            showcas[lastIter].Products[Iter].Quantity = Int32.Parse(str);
+                            return true;
+                        }
+                        else return false;
+                        
+                    default:
+                        return false;
                 }
-                else return false;
             }
+        }
+
+        private bool CheckVolume(int i, string str, bool qwuant, int i2)
+        {
+            int sumVolume = 0;
+
+            if (qwuant)
+            {
+                sumVolume = showcas[i].Products.Select(x => x.Volume * x.Quantity).Sum() - (showcas[i].Products[i2].Volume * showcas[i].Products[i2].Quantity) + (showcas[i].Products[i2].Volume * Int32.Parse(str));
+            }
+            else
+            {
+                sumVolume = showcas[i].Products.Select(x => x.Volume * x.Quantity).Sum() + Int32.Parse(str);
+            }
+            
+
+            if (sumVolume < showcas[i].Volume)
+            {
+                return true;
+            }
+            return false;
         }
 
         public bool Delete(bool firstMenu, int firstIter, int lastIter)

@@ -213,11 +213,30 @@ namespace Market
             }            
             Console.ForegroundColor = ConsoleColor.White;
             Console.BackgroundColor = ConsoleColor.Black;
+            if (print)
+            {
+                SendRespondEditItem(ref iterator, limit, firstMenu, ref exit, firstIt, print, itr3, str);
+            }            
         }
 
-        private void SendRespondEditItem()
+        private void SendRespondEditItem(ref int iterator, int limit, bool firstMenu, ref bool exit, int firstIt = 0, bool print = true, int itr3 = 0, string str = "")
         {
+            if(manage.Edit(firstMenu, iterator, firstIt, itr3, str))
+            {
 
+            }
+            else
+            {
+                ShowMessage(true, iterator, firstMenu, firstIt, Message.MISTAKE);
+                if(Answer())
+                {
+                    ShowMessage(false, iterator, firstMenu, firstIt, Message.MISTAKE);
+                }
+                else
+                {
+                    ShowMessage(false, iterator, firstMenu, firstIt, Message.MISTAKE);
+                }
+            }
         }
 
         private void ShowListEdit(ref int iterator, int limit, bool firstMenu, ref bool exit, int firstIt = 0, bool print = true, int iter3 = 0)
